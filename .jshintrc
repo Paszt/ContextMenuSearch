@@ -1,0 +1,12 @@
+{
+    "globals": {
+        "$": false
+    },
+    "esversion": 6,
+    "curly": true,
+    "latedef": false,
+    "undef": true,
+    "unused": true,
+    "browser": true,
+    "quotmark": "single"
+}

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Context Menu Search Options</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="vendor/bootstrap-reboot.min.css">
+    <link rel="stylesheet" type="text/css" href="options.css">
+</head>
+
+<body>
+    <header class="text-center">
+        <h1><svg xmlns="http://www.w3.org/2000/svg" height="28" width="28" style="margin:0 6px 4px 0;"><path d="m21 15.2v8.2h-16.3v-16.4h5.9c0.1-0.8 0.3-1.6 0.6-2.3h-6.5c-1.3 0-2.4 1-2.4 2.3v16.3c0 1.3 1.1 2.3 2.3 2.3h16.4c1.3 0 2.3-1 2.3-2.3v-5.8l-2.3-2.3zm1.5-4.8c0.5-0.8 0.8-1.8 0.8-2.8 0-2.9-2.3-5.3-5.3-5.3s-5.3 2.3-5.3 5.3 2.3 5.2 5.2 5.2c1 0 2-0.3 2.8-0.8l3.6 3.6 1.7-1.7-3.5-3.5zm-4.4 0.1c-1.6 0-2.9-1.3-2.9-2.9s1.3-2.9 2.9-2.9 2.9 1.3 2.9 2.9-1.3 2.9-2.9 2.9zm-7 10-2.3-4.5-2.3 2.5v-10.1l7.3 6.4-2.9 0.3 2.2 4.5-2 0.9z"/><circle opacity=".6" cy="7.6" cx="18.1" r="2.9" fill="#00f9ff"/></svg>Context
+            Menu Search Options</h1>
+    </header>
+    <div class="container">
+        <h2>Context Menu Structure</h2>
+        <div class="row">
+            <div class="col-9">
+                <ol id="sortable" class="sortConnector pl-0"> </ol>
+                <div>
+                    <div class="border mb-2 p-1">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input position-static" id="includeOptionsItem" checked>
+                            <label class="custom-control-label" for="includeOptionsItem">Include a link to this extension's Options at end of context menu</label>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button id="saveFileButton" type="button" class="btn btn-outline-primary"><img class="saveFile">Save To File</button>
+                        <button id="loadFileButton" type="button" class="btn btn-outline-primary"><img class="loadFile">Load From File</button>
+                        <span class="help30" data-toggle="tooltip" data-original-title="When you click the green save button above to the right, options are saved to Chrome Sync storage. You can also use these buttons to save/load a file."><img class="help30"></span>
+                        <input type="file" id="loadFileInput" accept=".json" class="invisible mb-4">
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <button id="addNewItemButton" type="button" class="btn btn-outline-primary btn-block text-left" data-toggle="modal" data-target="#addEditItemModal"><img class="add">Item</button>
+                <button id="addNewGroupButton" type="button" class="btn btn-outline-primary btn-block text-left" data-toggle="modal" data-target="#addEditGroupModal"><img class="add">Group</button>
+                <button id="addSeparator" type="button" class="btn btn-outline-primary btn-block text-left"><img class="add">Separator</button>
+                <button id="addPreset" type="button" class="btn btn-outline-primary btn-block text-left"><img class="add">Preset</button>
+                <button id="saveOptions" type="button" class="btn btn-outline-success btn-block text-left"><img class="save">Save</button>
+                <p class="mt-2 text-center saveMessage" style="display:none;">Settings Saved</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Item Modal -->
+    <div id="addEditItemModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form id="addEditItemForm" class="needs-validation" novalidate>
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add New Item</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="newItemName">Display Name</label>
+                            <input type="text" id="newItemName" class="form-control" placeholder="Display Name" required autofocus>
+                        </div>
+                        <div class="form-group">
+                            <label for="newItemURL">URL (add %s where the selected text should go)</label>
+                            <input type="url" id="newItemURL" class="form-control" placeholder="URL" required mustinclude="%s">
+                        </div>
+                        <div class="form-group mt-4" id="type">
+                            <div class="custom-control custom-radio custom-control-inline" data-toggle="tooltip" data-original-title="New tab is appended next to current tab">
+                                <input type="radio" class="custom-control-input" id="standardRadio" name="typeradio" value="(Standard)" checked>
+                                <label class="custom-control-label" for="standardRadio">Standard</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline" data-toggle="tooltip" data-original-title="New tab is appended at the end">
+                                <input type="radio" class="custom-control-input" id="lastTabRadio" name="typeradio" value="(Last Tab)">
+                                <label class="custom-control-label" for="lastTabRadio">Last Tab</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline" data-toggle="tooltip" data-original-title="the URL is opened in the same tab">
+                                <input type="radio" class="custom-control-input" id="sameTabRadio" name="typeradio" value="(Same Tab)">
+                                <label class="custom-control-label" for="sameTabRadio">Same Tab</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline" data-toggle="tooltip" data-original-title="A new incognito window is created">
+                                <input type="radio" class="custom-control-input" id="incognitoRadio" name="typeradio" value="(Incognito)">
+                                <label class="custom-control-label" for="incognitoRadio">Incognito</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" id="performAddButton">Add</button>
+                        <button type="submit" class="btn btn-primary" id="performUpdateButton">Update</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Group Modal -->
+    <div id="addEditGroupModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form id="addEditGroupForm" class="needs-validation" novalidate>
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Group</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="newGroupName">Display Name</label>
+                            <input type="text" id="newGroupName" class="form-control" placeholder="Display Name" required autofocus>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary performAddButton">Add</button>
+                        <button type="submit" class="btn btn-primary performUpdateButton">Update</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Presets Modal -->
+
+
+    <script src="vendor/jquery-3.3.1.min.js"></script>
+    <script src="vendor/bootstrap.bundle.min.js"></script>
+    <script src="vendor/jquery.validate.min.js"></script>
+    <script src="vendor/jquery-sortable-min.js"></script>
+    <script src="menuStructures.js"></script>
+    <script src="options.js"></script>
+</body>
+
+</html>

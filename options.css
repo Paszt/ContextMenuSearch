@@ -1,0 +1,161 @@
+header {
+    padding: 15px;
+}
+
+h1 {
+    font-size: x-large;
+}
+
+h2 {
+    font-size: large;
+    padding: 10px;
+}
+
+.container {
+    max-width: 800px;
+}
+
+/* floating labels start */
+
+/* :root {
+    --input-padding-x: 1rem;
+    --input-padding-y: 1rem;
+}
+
+.form-label-group {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.form-label-group>input,
+.form-label-group>label {
+    padding: var(--input-padding-y) var(--input-padding-x);
+} */
+
+/* .form-label-group>label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    margin-bottom: 0; */
+
+/* Override default `<label>` margin */
+
+/* line-height: 1.5;
+    color: #495057;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    transition: all .1s ease-in-out;
+} */
+
+/* .form-label-group input::placeholder {
+    color: transparent;
+}
+
+.form-label-group input:not(:placeholder-shown) {
+    padding-top: calc(var(--input-padding-y) + var(--input-padding-y) * (2 / 3));
+    padding-bottom: calc(var(--input-padding-y) / 3);
+}
+
+.form-label-group input:not(:placeholder-shown)~label {
+    padding-top: calc(var(--input-padding-y) / 3);
+    padding-bottom: calc(var(--input-padding-y) / 3);
+    font-size: 12px;
+    color: #777;
+} */
+
+/* floating labels end */
+
+label.error {
+    color: red;
+    font-style: italic;
+}
+
+input.error {
+    border: 1px dotted red;
+}
+
+/*sortable */
+
+body.dragging,
+body.dragging * {
+    cursor: move !important;
+}
+
+.dragged {
+    position: absolute;
+    top: 0;
+    opacity: 0.5;
+    z-index: 2000;
+}
+
+ol.sortConnector li {
+    list-style-type: none;
+}
+
+ol.sortConnector>li:last-of-type {
+    border-bottom: 1px solid #dee2e6 !important;
+}
+
+ol.sortConnector li * li {
+    border-right: 0 !important;
+}
+
+ol.sortConnector li.placeholder {
+    position: relative;
+    min-height: 34px;
+    border: 1px dashed rgba(0, 0, 0, .125);
+}
+
+ol.sortConnector li.placeholder:before {
+    position: absolute;
+    /* content: "";
+    width: 0;
+    height: 0;
+    margin-top: -5px;
+    left: -5px;
+    top: -4px;
+    border: 5px solid transparent;
+    border-left-color: red;
+    border-right: none; */
+}
+
+/* End Sortable */
+
+[data-type="group"] {
+    background: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' width='24'%3E%3Cpath d='M7.3 6L16.7 12 7.3 18z'/%3E%3C/svg%3E") no-repeat 0px 8px;
+}
+
+.type {
+    color: grey;
+    font-size: smaller;
+    vertical-align: middle;
+}
+
+span.icon {
+    padding-right: 6px;
+}
+
+span.help30 {
+    margin-left: 4px;
+}
+
+span.icon svg {
+    fill: currentColor;
+}
+
+span svg {
+    fill: #444444;
+}
+
+span.marker.empty {
+    /* top: 0px;
+    border-top-left-radius: 3px; */
+    left: 0px;
+    position: absolute;
+    border: 7px solid transparent;
+    border-top-color: rgb(200, 0, 0);
+    border-left-color: rgb(200, 0, 0);
+    float: left;
+}

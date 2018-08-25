@@ -1,0 +1,17 @@
+{
+    "name": "Context Menu Search",
+    "version": "1.0",
+    "description": "Add configuarble context menu items to open a new tab based on the selected text.",
+    "background": {
+        "persistent": false,
+        "scripts": ["menuStructures.js", "main.js"]
+    },
+    "permissions": ["contextMenus", "storage"],
+    "options_page": "options.html",
+    "manifest_version": 2,
+    "icons": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    }
+}
