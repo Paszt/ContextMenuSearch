@@ -2,16 +2,20 @@
 
 let localMenuStructure;
 
-const createMenu = (item, parent) => {
-    if (item.type != 'separator' && !item.enabled) {
+const createMenuItem = (item, parent) => {
+    // don’t create if type is group or item but isn't enable, or if type is group but doesn't have children.
+    if ((item.type != 'separator' && !item.enabled) || (item.type === 'group' && !item.children)) {
         return;
     }
-    if (item.type === 'group' && !item.children) {
+    // don’t create if there are children, but none of them are enabled.
+    // TODO: enhance check for no enabled children to check all nested levels.
+    if (item.children && item.children.filter(item => item.enabled === true).length === 0) {
         return;
     }
+
     let menuOptions = {
-        'id': item.id,
-        'contexts': ['selection']
+        id: item.id,
+        contexts: ['selection']
     };
     if (parent) {
         menuOptions.parentId = parent.id;
@@ -25,7 +29,7 @@ const createMenu = (item, parent) => {
     if (item.type === 'group') {
         if (item.children) {
             item.children.forEach((childItem) => {
-                createMenu(childItem, item);
+                createMenuItem(childItem, item);
             });
         }
     }
@@ -35,13 +39,13 @@ const initializeMenus = (storageItems) => {
     localMenuStructure = storageItems.menuStructure;
     chrome.contextMenus.removeAll();
     localMenuStructure.forEach((item) => {
-        createMenu(item, null);
+        createMenuItem(item, null);
     });
     if (storageItems.includeOptionsItem) {
         chrome.contextMenus.create({
             id: 'optionSeparator',
             type: 'separator',
-            'contexts': ['selection']
+            contexts: ['selection']
         });
         chrome.contextMenus.create({
             title: 'Options',
@@ -87,37 +91,51 @@ const executeSearch = (info, tab) => {
         return;
     }
     let menuItem = findItemById(info.menuItemId);
-    if (menuItem && menuItem.url) {
-        let url = menuItem.url;
-        url = url.replace(/%s/, encodeURIComponent(info.selectionText));
-        switch (menuItem.tabtype) {
-            case '(Standard)':
-                chrome.tabs.create({
-                    url: url,
-                    'index': tab.index + 1
-                });
-                break;
-            case '(Last Tab)':
-                chrome.tabs.create({
-                    url: url
-                });
-                break;
-            case '(Same Tab)':
-                chrome.tabs.update(tab.id, {
-                    'url': url
-                });
-                break;
-            case '(Incognito)':
-                chrome.windows.create({
-                    'url': url,
-                    'incognito': true,
-                    state: 'maximized'
-                });
+    if (menuItem && menuItem.urls) {
+        let encodedSelection = encodeURIComponent(info.selectionText);
+        if (menuItem.tabtype === '(Incognito)') {
+            chrome.windows.create({
+                url: menuItem.urls.map(url => url.replace(/%s/, encodedSelection)),
+                incognito: true,
+                state: 'maximized'
+            });
+        } else {
+            menuItem.urls.forEach((url, index) => {
+                url = url.replace(/%s/, encodedSelection);
+                switch (menuItem.tabtype) {
+                    case '(Standard)':
+                        chrome.tabs.create({
+                            url: url,
+                            'index': tab.index + 1 + index,
+                            active: menuItem.active,
+                        });
+                        break;
+                    case '(Last Tab)':
+                        chrome.tabs.create({
+                            url: url,
+                            active: menuItem.active,
+                        });
+                        break;
+                    case '(Same Tab)':
+                        if (index === 0) {
+                            chrome.tabs.update(tab.id, {
+                                'url': url,
+                                active: menuItem.active,
+                            });
+                        } else {
+                            chrome.tabs.create({
+                                url: url,
+                                'index': tab.index + index,
+                                active: menuItem.active,
+                            });
+                        }
+                }
+            });
         }
     } else {
         /* jshint ignore:start */
-        if (menuItem && !menuItem.url) {
-            console.error('Item with id “' + info.menuItemId + '” doesn’t have a url property.');
+        if (menuItem && !menuItem.urls) {
+            console.error('Item with id “' + info.menuItemId + '” doesn’t have a urls property.');
         } else if (!menuItem) {
             console.error('Couldn’t find item with id “' + info.menuItemId + '.”');
         }

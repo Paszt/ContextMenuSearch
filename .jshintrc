@@ -4,7 +4,7 @@
     },
     "esversion": 6,
     "curly": true,
-    "latedef": false,
+    "latedef": true,
     "undef": true,
     "unused": true,
     "browser": true,
