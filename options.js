@@ -46,9 +46,9 @@ const svgImgSpan = svg => ('<span class="icon">' + svg + '</span>');
     $('img.update').replaceWith(svgImgSpan(updateSvg));
 })();
 
-(function($) {
-    $.fn.addUrlsTooltip = function() {
-        return this.each(function() {
+(function ($) {
+    $.fn.addUrlsTooltip = function () {
+        return this.each(function () {
             let urls = $(this).data('urls'),
                 label = $(this).find('label'),
                 title = '';
@@ -76,7 +76,7 @@ const getNextItemIndex = ($parent) => {
 };
 
 const renumberItems = () => {
-    $('#sortable > li').each(function(index) {
+    $('#sortable > li').each(function (index) {
         $(this).data('id', '0' + index);
         if ($(this).data('type') === 'group') {
             // show or hide the empty span marker
@@ -87,7 +87,7 @@ const renumberItems = () => {
             // } else {
             //     $(this).find('span.marker').addClass('empty');
             // }
-            $(this).find('ol li').each(function(groupIndex) {
+            $(this).find('ol li').each(function (groupIndex) {
                 $(this).data('id', 'G0' + index + groupIndex);
             });
         }
@@ -161,7 +161,7 @@ const addUrlInput = (url) => {
             .on('keyup change', validateUrl))
         .append($('<div class="input-group-append">')
             .append($('<button class="btn btn-danger" type="button" data-toggle="tooltip" title="Remove">' + removeSvg + '</button>')
-                .click(function() {
+                .click(function () {
                     $('.tooltip').hide();
                     $(this).closest('li.input-group').remove();
                     configureItemUrls();
@@ -209,11 +209,11 @@ const addNewItem = (item, $parent) => {
                     .append('<label class="custom-control-label" for="isEnabled' + counter + '">' + item.name))
                 .append('<div class="ml-1 type align-self-center mb-1">' + (item.tabtype === '(Standard)' ? '' : item.tabtype)))
             .append($('<span class="px-1" style="cursor:pointer" data-toggle="modal" data-target="#item-modal">' + editSvg)
-                .click(function() {
+                .click(function () {
                     updateItemModal(this);
                 }))
             .append($('<span class="px-1" style="cursor:pointer" title="Delete">' + deleteSvg)
-                .click(function() {
+                .click(function () {
                     removeItem(this);
                 })))
         .appendTo($parent ? $parent : '#sortable')
@@ -222,13 +222,14 @@ const addNewItem = (item, $parent) => {
 };
 
 // Delegated Change Event Handlers for the Enabled checkboxes
-$('#sortable').on('change', 'input:checkbox', function() {
+$('#sortable').on('change', 'input:checkbox', function () {
     $(this).closest('li').data('enabled', this.checked);
 });
 
 const addNewGroup = (groupName, enabled, $parent) => {
     counter += 1;
-    let li = $('<li class="border border-bottom-0 position-relative">')
+    let ol = $('<ol>');
+    $('<li class="border border-bottom-0 position-relative">')
         .data('type', 'group')
         .data('name', groupName)
         .data('enabled', enabled)
@@ -239,7 +240,7 @@ const addNewGroup = (groupName, enabled, $parent) => {
                     '" data-toggle="tooltip" title="Enabled?" ' + (enabled ? 'checked' : '') + '>')
                 .append('<label class="custom-control-label" for="isEnabled' + counter + '">' + groupName))
             .append($('<span class="px-1" style="cursor:pointer" data-toggle="modal" data-target="#group-modal">' + editSvg)
-                .click(function() {
+                .click(function () {
                     groupBeingEdited = $(this).closest('li');
                     $('#group-name').val(groupBeingEdited.data('name'));
                     $('#add-group').hide();
@@ -247,14 +248,15 @@ const addNewGroup = (groupName, enabled, $parent) => {
                     $('#group-modal .modal-title').text('Edit Group');
                 }))
             .append($('<span class="px-1" style="cursor:pointer">' + deleteSvg)
-                .click(function() {
+                .click(function () {
                     removeItem(this);
                 }))
             .append('<span class="marker empty" data-toggle="tooltip" title="Empty group, will not be created">'))
-        .append('<ol>')
+        .append(ol)
         .appendTo($parent ? $parent : '#sortable')
         .find('[data-toggle="tooltip"]').tooltip();
-    return li.find('ol');
+    //console.log(ol);
+    return ol;
 };
 
 const addSeparator = ($parent) => {
@@ -264,7 +266,7 @@ const addSeparator = ($parent) => {
         .append($('<div class="d-flex pr-2 pl-4">')
             .append('<div class="col-10 p-2 mb-3 mr-auto" style="border-bottom: solid 1px;">')
             .append($('<span class="px-1" style="cursor:pointer">' + deleteSvg)
-                .click(function() {
+                .click(function () {
                     removeItem(this);
                 })))
         .appendTo($parent ? $parent : '#sortable')
@@ -358,6 +360,7 @@ const fileInputChanged = event => {
         let reader = new FileReader();
         reader.onload = fileLoadedEvent => {
             let textFromFileLoaded = fileLoadedEvent.target.result;
+            //console.log(JSON.parse(textFromFileLoaded));
             JSON.parse(textFromFileLoaded).forEach(item => {
                 loadItem(item);
             });
@@ -374,7 +377,7 @@ $('#load-file-input').change(event => {
 
 $('#add-item, #update-item').click(() => {
     validateName({ currentTarget: $('#item-name') });
-    $('#item-url-list li input').each(function() {
+    $('#item-url-list li input').each(function () {
         validateUrl({ currentTarget: this });
     });
     if ($('#item-modal .error').length === 0) {
@@ -386,7 +389,7 @@ $('#add-item, #update-item').click(() => {
             active: $('#item-is-active')[0].checked,
             urls: []
         };
-        $('#item-modal div.urls input').each(function() {
+        $('#item-modal div.urls input').each(function () {
             item.urls.push($(this).val());
         });
         if (itemBeingEdited) {
@@ -462,7 +465,7 @@ $('#sortable').sortable({
         }
         _super($item, container);
     },
-    serialize: function($parent, $children, parentIsContainer) {
+    serialize: function ($parent, $children, parentIsContainer) {
         var result = $.extend({}, $parent.data());
         if (parentIsContainer) {
             return $children;
@@ -490,7 +493,7 @@ $('#save-options').click(() => {
         'isDefaultActive': $('#default-active')[0].checked
     }, () => {
         $('p.saveMessage').show();
-        setTimeout(function() {
+        setTimeout(function () {
             $('p.saveMessage').fadeOut();
         }, 2000);
     });
