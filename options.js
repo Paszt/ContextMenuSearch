@@ -186,6 +186,7 @@ const updateItemModal = (span) => {
     updateItemModalUrls(itemBeingEdited.data('urls'));
     $('#type input[value="' + itemBeingEdited.data('tabtype') + '"]')[0].checked = true;
     $('#item-is-active')[0].checked = itemBeingEdited.data('active');
+    $('#item-is-encoded')[0].checked = itemBeingEdited.data('encode');
     $('#add-item').hide();
     $('#update-item').show();
     $('#item-modal .modal-title').text('Edit Item');
@@ -201,6 +202,7 @@ const addNewItem = (item, $parent) => {
         .data('enabled', item.enabled)
         .data('urls', item.urls)
         .data('active', item.active)
+        .data('encode', item.encode)
         .append($('<div class="d-flex px-2">')
             .append($('<div class="mr-auto py-1 d-flex">')
                 .append($('<div class="custom-control custom-checkbox">')
@@ -297,6 +299,7 @@ const updateItem = (item) => {
         .data('urls', item.urls)
         .data('tabtype', item.tabtype)
         .data('active', item.active)
+        .data('encode', item.encode)
         .addUrlsTooltip();
     $(itemBeingEdited).find('label').text(item.name);
     $(itemBeingEdited).find('div.type').text(item.tabtype === '(Standard)' ? '' : item.tabtype);
@@ -387,6 +390,7 @@ $('#add-item, #update-item').click(() => {
             tabtype: $('#type input:checked').val(),
             enabled: true,
             active: $('#item-is-active')[0].checked,
+            encode: $('#item-is-encoded')[0].checked,
             urls: []
         };
         $('#item-modal div.urls input').each(function () {

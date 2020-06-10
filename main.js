@@ -92,16 +92,19 @@ const executeSearch = (info, tab) => {
     }
     let menuItem = findItemById(info.menuItemId);
     if (menuItem && menuItem.urls) {
-        let encodedSelection = encodeURIComponent(info.selectionText);
+        let selectionText = info.selectionText;
+        if (menuItem.encode) {
+            selectionText = encodeURIComponent(selectionText);
+        }
         if (menuItem.tabtype === '(Incognito)') {
             chrome.windows.create({
-                url: menuItem.urls.map(url => url.replace(/%s/, encodedSelection)),
+                url: menuItem.urls.map(url => url.replace(/%s/, selectionText)),
                 incognito: true,
                 state: 'maximized'
             });
         } else {
             menuItem.urls.forEach((url, index) => {
-                url = url.replace(/%s/, encodedSelection);
+                url = url.replace(/%s/, selectionText);
                 switch (menuItem.tabtype) {
                     case '(Standard)':
                         chrome.tabs.create({
